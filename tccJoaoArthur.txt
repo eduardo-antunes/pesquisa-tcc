@@ -1,0 +1,15 @@
+Identificação de Espécies de Eucalipto Resistentes à Seca utilizando Aprendizado de Máquina
+A identificação de espécies de eucalipto resistentes à seca pode trazer in
+númeras vantagens para a indústria mundial. Atualmente, com as altas
+variações climáticas ocorrendo no âmbito global, com ênfase nas prolongadas
+temporadas de seca, milhares de hectares de eucalipto têm tido sua produção
+prejudicada. Sendo essa uma matéria prima vital para a indústria, a sua perda
+causa prejuízo em diversos segmentos. Este trabalho tem como objetivo a
+utilização de dois métodos de aprendizagem de máquina:  ́Arvore de Decisão e
+Floresta Aleatória, com o propósito de identificar, com base em dados coletados
+no campo, quais são as variáveis mais relevantes para classificar uma espécie
+de eucalipto em resistente ou não à seca. Ao final será possível observar que a
+maior acurácia de cada um dos modelos citados foram respectivamente: 70.2%
+e 63.1%, sendo que os bioidentificadores mais importantes, para a classificação,
+em ordem de relevância foram: potencial hídrico foliar,  ́area foliar específica e
+comprimento foliar.

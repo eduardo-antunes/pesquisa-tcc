@@ -1,0 +1,12 @@
+Relevância Temática dos Comentários e Diversidade de Gênero em Projetos Open Source
+Este trabalho analisa a participação feminina em termos da relevância
+temática dos comentários postados no ambiente de issue tracking
+do GitHub. O trabalho também investiga se existem relações entre
+a relevância temática e outras métricas ligadas ao desenvolvedor,
+como reputação, tempo de plataforma e número de issues reportadas.
+Foram analisados dados de 5 comunidades open source abertas,
+e 5 dedicadas às mulheres. Os resultados apontam que, na média,
+a relevância dos comentários feitos por mulheres é similar à dos
+homens, se mostrando igualmente capazes, porém demonstram
+uma representatividade e participação muito baixas, tendo apenas
+22% dos comentários postados e 16% das issues reportadas.

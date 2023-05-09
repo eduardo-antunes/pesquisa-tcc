@@ -1,0 +1,10 @@
+Análise de uma solução de rotas seguras para coletivos urbanos centrada no usuário
+Estudos sobre fluxos de mobilidade vêm sendo cada vez mais relevantes devido ao 
+aumento expressivo de dispositivos de coleta de dados e aplicações. Apesar disto,
+são poucos os trabalhos que abordam tal tema, além de ferramentas que auxiliam 
+neste aspecto. Neste trabalho, foi implementada uma ferramenta que busca facilitar
+os estudo relacionados a fluxo de mobilidade, além de demonstrar sua aplicação em 
+um estudos de caso, avaliando o impacto que a implementação de rotas seguras causa 
+na cidade de São Paulo. Com os resultados, percebe-se que esta solução pode aperfeiçoar 
+estudos já feitos na  ́area de mobilidade, trazendo mais detalhe sobre as mudanças feitas, e
+como este impacto reflete nos deslocamentos.

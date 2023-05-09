@@ -1,0 +1,13 @@
+Detecção Automática de Linhas de Plantio em Culturas Agrícolas
+A detecção automática de linhas de plantio em diferentes culturas
+não ́é um trabalho simples e exige um esforço para ser realizada manualmente 
+pelo agricultor. A automação deste processo  ́e um bom exemplo de aplicação 
+que tem se tornado promissora com a inserção da tecnologia digital na
+agricultura para planejar rotas de colheita. Este artigo compara
+o desempenho de três algoritmos de identificação do trajeto de
+culturas agrícolas a partir de imagens simuladas por software e
+de fotografias capturadas por um Veículo Aéreo Não Tripulado
+(VANT). Os resultados das soluções propostas foram validados
+pela métrica Dice Similarity Coefficient (DSC) por meio da
+comparação dos resultados com as máscaras dos caminhos
+idealizados. Os resultados obtiveram um desempenho de até 99,5%.

@@ -1,0 +1,13 @@
+SENDAS: Scalable ENrichment for mobility DAta Sets
+Recent years of technological advancement and popularization has
+grown the availability of mobility data, collected from different sources. 
+Analyzing such data is an active research and industrial development field, with a
+diverse range of applications. However, trajectory data has also been following
+the Big Data trend, and currently existing tools lack of scalability. To cover this
+gap, we introduce Sendas – Scalable ENrichment for mobility DAta Sets –, a
+new Scala library built around the Apache Spark framework, enabling parallel
+and distributed execution for mobility analysis techniques. We present definitions
+that extend state-of-the-art notions of trajectory naming, flow calculation
+and mobility motif identification, and also conduct comparative performance
+evaluation, finding running time improvements of 4 to 6 times when compared
+to non-parallel execution.
