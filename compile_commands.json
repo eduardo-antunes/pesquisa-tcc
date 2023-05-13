@@ -1,1 +1,32 @@
-[]
+[
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-ggdb",
+      "-I",
+      "include/",
+      "-c",
+      "src/main.c"
+    ],
+    "directory": "/home/eduardo/Projetos/trabalhos/pesquisa-tcc",
+    "file": "/home/eduardo/Projetos/trabalhos/pesquisa-tcc/src/main.c"
+  },
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-ggdb",
+      "-I",
+      "include/",
+      "-c",
+      "src/patricia.c"
+    ],
+    "directory": "/home/eduardo/Projetos/trabalhos/pesquisa-tcc",
+    "file": "/home/eduardo/Projetos/trabalhos/pesquisa-tcc/src/patricia.c"
+  }
+]

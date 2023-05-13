@@ -1,6 +1,6 @@
 5
-tccEstelaMiranda3305.txt
-tccHenriqueSantana3051.txt
-tccJoaoArthur.txt
-tccJoaoMarcos.txt
-tccMatheusFreitasMartins.txt
+static/tccEstelaMiranda3305.txt
+static/tccHenriqueSantana3051.txt
+static/tccJoaoArthur.txt
+static/tccJoaoMarcos.txt
+static/tccMatheusFreitasMartins.txt
