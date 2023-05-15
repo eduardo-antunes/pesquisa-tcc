@@ -2,9 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <wctype.h>
+
 #include "patricia.h"
 #include "leitura.h"
-#include <wctype.h>
 
 void input_archive(Patricia* pat) {
     

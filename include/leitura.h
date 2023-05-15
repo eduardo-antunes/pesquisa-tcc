@@ -1,5 +1,11 @@
-
 #include <wchar.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <wctype.h>
+
+#include "patricia.h"
+
 //Lê o arquivo "entrada.txt" e analisa quantos arquivos de TCC
 //têm. Lê as linhas e abre como arquivo cada linha como arquivo.
 void input_archive (Patricia* pat);

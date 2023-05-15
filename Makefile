@@ -10,5 +10,8 @@ main.o: src/main.c
 patricia.o: src/patricia.c include/patricia.h
 	$(CC) $(CFLAGS) -I $(INC_DIR) -c $<
 
+leitura.o: src/leitura.c include/leitura.h
+	$(cc) $(CFLAGS) -I $(INC_DIR) -c $<
+
 clean:
 	rm *.o pesquisa-tcc
