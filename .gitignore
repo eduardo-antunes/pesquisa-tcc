@@ -1,3 +1,4 @@
 pesquisa-tcc
+compile_commands.json
 .cache/
 *.o

@@ -19,9 +19,10 @@ static void leaf_inc(Patricia_node *node, int file_id) {
 }
 
 // Aloca um novo nó interno para a árvore patrícia
-static Patricia_node *node_alloc(int index, wchar_t ch) {
+static Patricia_node *node_alloc(int index, wchar_t ch, Patricia_node *left, Patricia_node *right) {
     Patricia_node *node = (Patricia_node*) malloc(sizeof(Patricia_node));
-    node->as.internal.left = node->as.internal.right = NULL;
+    node->as.internal.left = left;
+    node->as.internal.right = right;
     node->as.internal.index = index;
     node->as.internal.ch = ch;
     node->node_t = NODE_INT;
@@ -64,20 +65,20 @@ static int find_diff(const wchar_t *w1, const wchar_t *w2) {
 }
 
 // Adiciona uma nova palavra na árvore patrícia quando ela não está presente
-static void patricia_insert(Patricia_node **root_ptr, int nr_files, int index, const wchar_t *word, int file_id) {
+static void patricia_insert(Patricia_node **root_ptr, int nr_files, int index,
+        const wchar_t *word, wchar_t letter, int file_id) {
     // Caso base: ponto de inserção encontrado
     if((*root_ptr)->node_t == NODE_LEAF || index < (*root_ptr)->as.internal.index) {
         Patricia_node *node = leaf_alloc(nr_files, word), *aux = *root_ptr;
-        (*root_ptr) = node_alloc(index, word[index]);
-        (*root_ptr)->as.internal.left = node;
-        (*root_ptr)->as.internal.right = aux;
+        *root_ptr = (word[index] <= letter) ? node_alloc(index, word[index], node, aux)
+            : node_alloc(index, letter, aux, node);
         leaf_inc(node, file_id);
         return;
     }
     // Percurso recursivo pela árvore
-    Patricia_node **ptr = word[(*root_ptr)->as.internal.index] == (*root_ptr)->as.internal.ch ?
+    Patricia_node **ptr = word[(*root_ptr)->as.internal.index] <= (*root_ptr)->as.internal.ch ?
         &(*root_ptr)->as.internal.left : &(*root_ptr)->as.internal.right;
-    patricia_insert(ptr, nr_files, index, word, file_id);
+    patricia_insert(ptr, nr_files, index, word, letter, file_id);
 }
 
 // Incrementa a contagem de uma palavra em particular na patrícia para um
@@ -93,7 +94,7 @@ void patricia_update(Patricia *pat, const wchar_t *word, int file_id) {
     // Percurso iterativo pela árvore
     Patricia_node *node = pat->root;
     while(node->node_t != NODE_LEAF) {
-        if(word[node->as.internal.index] == node->as.internal.ch)
+        if(word[node->as.internal.index] <= node->as.internal.ch)
             node = node->as.internal.left;
         else
             node = node->as.internal.right;
@@ -103,7 +104,8 @@ void patricia_update(Patricia *pat, const wchar_t *word, int file_id) {
     // Se a palavra já estiver na árvore, podemos simplesmente atualizá-la
     if(index < 0) leaf_inc(node, file_id);
     // Do contrário, temos que adicioná-la
-    else patricia_insert(&pat->root, pat->nr_files, index, word, file_id);
+    else patricia_insert(&pat->root, pat->nr_files, index, word,
+            node->as.leaf.word[index], file_id);
 }
 
 // Obtém a lista de pares associada a uma palavra na árvore patrícia
@@ -123,7 +125,7 @@ int patricia_pairs(const Patricia_node *node, const wchar_t *word, Pair **pairs)
         return -1;
     }
     // Percurso recursivo pela árvore
-    if(word[node->as.internal.index] == node->as.internal.ch)
+    if(word[node->as.internal.index] <= node->as.internal.ch)
         return patricia_pairs(node->as.internal.left, word, pairs);
     else
         return patricia_pairs(node->as.internal.right, word, pairs);
