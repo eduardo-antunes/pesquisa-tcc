@@ -28,5 +28,20 @@
     ],
     "directory": "/home/eduardo/Projetos/trabalhos/pesquisa-tcc",
     "file": "/home/eduardo/Projetos/trabalhos/pesquisa-tcc/src/patricia.c"
+  },
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-ggdb",
+      "-I",
+      "include/",
+      "-c",
+      "src/leitura.c"
+    ],
+    "directory": "/home/eduardo/Projetos/trabalhos/pesquisa-tcc",
+    "file": "/home/eduardo/Projetos/trabalhos/pesquisa-tcc/src/leitura.c"
   }
 ]

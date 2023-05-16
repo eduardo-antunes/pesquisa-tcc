@@ -34,17 +34,17 @@ typedef struct {
 } Patricia;
 
 // Inicializa uma árvore patrícia vazia
-void patricia_init(Patricia *p, int nr_files);
+void patricia_init(Patricia *pat, int nr_files);
 
 // Incrementa a contagem de uma palavra em particular na patrícia para um
 // arquivo em particular. Caso essa palavra ainda não tenha sido registrada
 // nesse arquivo ou não exista na patrícia, cria o que for necessário
-void patricia_update(Patricia *p, const wchar_t *word, int file_id);
+void patricia_update(Patricia *pat, const wchar_t *word, int file_id);
 
 // Obtém a lista de pares associada a uma palavra na árvore patrícia
 int patricia_pairs(const Patricia_node *node, const wchar_t *word, Pair **pairs);
 
 // Desaloca a árvore patrícia
-void patricia_free(Patricia *p);
+void patricia_free(Patricia *pat);
 
 #endif // PESQUISA_TCC_PATRICIA_H

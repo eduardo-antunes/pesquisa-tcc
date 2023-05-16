@@ -10,7 +10,6 @@
 void input_archive(Patricia* pat) {
     
     FILE *Input;
-    FILE *Temp;
     
     //Define qual será o arquivo que comtém os arquivos TCC
     Input = fopen("entrada.txt", "r");
@@ -24,7 +23,8 @@ void input_archive(Patricia* pat) {
 
     //caso ERRO: Caso não exita ou não ache o arquivo "entrada.txt"
     if (Input == NULL) {
-        return "Erro no arquivo";
+        fprintf(stderr, "Erro no arquivo");
+        return;
     }
 
     //Passa por todo o arquivo, a partir do número de TCC's, pulando a
@@ -56,9 +56,7 @@ void input_archive(Patricia* pat) {
     }
     //Fecha o arquivo "entrada.txt"
     fclose(Input);
-
 }
-
 
 void readout_archive(FILE* TCC, int file_id, Patricia* pat) {
     //Definindo um tamanho de linha e o tipo da palavra da qual permita
@@ -74,7 +72,7 @@ void readout_archive(FILE* TCC, int file_id, Patricia* pat) {
         line[wcscspn(line, L"\n")] = '\0';
         for(int i = 0; line[i] != '\0';i++)
             line[i] = iswpunct(line[i]) ? ' ' : towlower(line[i]);
-        palavra = wcstrtok(line, L" ",&ptr);
+        palavra = wcstok(line, L" ",&ptr);
         do {
 
             //A palavra atual é inserida na árvore Patricia, e depois
@@ -82,7 +80,7 @@ void readout_archive(FILE* TCC, int file_id, Patricia* pat) {
             // e voltar para o primeiro "while" para ir para a próxima
             // linha.
             patricia_update(pat,palavra,file_id);
-            palavra = wcstrtok(NULL, L" ",&ptr);
+            palavra = wcstok(NULL, L" ",&ptr);
         } while (palavra != NULL);
     }
 }

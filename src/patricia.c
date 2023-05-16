@@ -47,9 +47,9 @@ static void node_free(Patricia_node *node) {
 }
 
 // Inicializa uma árvore patrícia vazia
-void patricia_init(Patricia *p, int nr_files) {
-    p->root = NULL;
-    p->nr_files = nr_files;
+void patricia_init(Patricia *pat, int nr_files) {
+    pat->root = NULL;
+    pat->nr_files = nr_files;
 }
 
 // Localiza o primeiro caractere que difere entre duas strings
@@ -83,15 +83,15 @@ static void patricia_insert(Patricia_node **root_ptr, int nr_files, int index, c
 // Incrementa a contagem de uma palavra em particular na patrícia para um
 // arquivo em particular. Caso essa palavra ainda não tenha sido registrada
 // nesse arquivo ou não exista na patrícia, cria o que for necessário
-void patricia_update(Patricia *p, const wchar_t *word, int file_id) {
+void patricia_update(Patricia *pat, const wchar_t *word, int file_id) {
     // Caso base: árvore vazia
-    if(p->root == NULL) {
-        p->root = leaf_alloc(p->nr_files, word);
-        leaf_inc(p->root, file_id);
+    if(pat->root == NULL) {
+        pat->root = leaf_alloc(pat->nr_files, word);
+        leaf_inc(pat->root, file_id);
         return;
     }
     // Percurso iterativo pela árvore
-    Patricia_node *node = p->root;
+    Patricia_node *node = pat->root;
     while(node->node_t != NODE_LEAF) {
         if(word[node->as.internal.index] == node->as.internal.ch)
             node = node->as.internal.left;
@@ -103,7 +103,7 @@ void patricia_update(Patricia *p, const wchar_t *word, int file_id) {
     // Se a palavra já estiver na árvore, podemos simplesmente atualizá-la
     if(index < 0) leaf_inc(node, file_id);
     // Do contrário, temos que adicioná-la
-    else patricia_insert(&p->root, p->nr_files, index, word, file_id);
+    else patricia_insert(&pat->root, pat->nr_files, index, word, file_id);
 }
 
 // Obtém a lista de pares associada a uma palavra na árvore patrícia
@@ -119,6 +119,7 @@ int patricia_pairs(const Patricia_node *node, const wchar_t *word, Pair **pairs)
             *pairs = node->as.leaf.pairs;
             return node->as.leaf.top;
         }
+        *pairs = NULL;
         return -1;
     }
     // Percurso recursivo pela árvore
@@ -139,7 +140,7 @@ static void pfree(Patricia_node *root) {
 }
 
 // Desaloca a árvore patrícia
-void patricia_free(Patricia *p) {
-    p->nr_files = 0;
-    pfree(p->root);
+void patricia_free(Patricia *pat) {
+    pat->nr_files = 0;
+    pfree(pat->root);
 }
