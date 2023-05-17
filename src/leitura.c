@@ -11,7 +11,6 @@ int* input_archive(Patricia* pat) {
     
     FILE *Input;
     FILE *Temp;
-    int* counts;
     
     //Define qual será o arquivo que comtém os arquivos TCC
     Input = fopen("entrada.txt", "r");
@@ -29,7 +28,8 @@ int* input_archive(Patricia* pat) {
 
     //caso ERRO: Caso não exita ou não ache o arquivo "entrada.txt"
     if (Input == NULL) {
-        return "Erro no arquivo";
+        fprintf(stderr, "Erro no arquivo");
+        return;
     }
 
     //Passa por todo o arquivo, a partir do número de TCC's, pulando a
@@ -62,13 +62,10 @@ int* input_archive(Patricia* pat) {
     //Fecha o arquivo "entrada.txt"
     fclose(Input);
 
-    //Retornando o vetor counts
-    return counts;
-
 }
 
 
-void readout_archive(FILE* TCC, int file_id, Patricia* pat, int* counts) {
+void readout_archive(FILE* TCC, int file_id, Patricia* pat) {
     //Definindo um tamanho de linha e o tipo da palavra da qual permita
     // mexer com acentos sem grandes preocupações.
     wchar_t *palavra, line[1024],*ptr;
@@ -83,11 +80,6 @@ void readout_archive(FILE* TCC, int file_id, Patricia* pat, int* counts) {
         for(int i = 0; line[i] != '\0';i++)
             line[i] = iswpunct(line[i]) ? ' ' : towlower(line[i]);
         palavra = wcstrtok(line, L" ",&ptr);
-        
-        //Incrmenta o número de palavras que foram armazenadas em
-        // cada arquivo, sendo o índice correspondente com um
-        // documento TCC
-        counts[file_id]++;
         do {
 
             //A palavra atual é inserida na árvore Patricia, e depois
@@ -95,11 +87,6 @@ void readout_archive(FILE* TCC, int file_id, Patricia* pat, int* counts) {
             // e voltar para o primeiro "while" para ir para a próxima
             // linha.
             patricia_update(pat,palavra,file_id);
-            
-            //Incrmenta o número de palavras que foram armazenadas em
-            // cada arquivo, sendo o índice correspondente com um
-            // documento TCC
-            counts[file_id]++;
             palavra = wcstrtok(NULL, L" ",&ptr);
         } while (palavra != NULL);
     }
