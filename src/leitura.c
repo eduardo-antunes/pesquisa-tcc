@@ -11,7 +11,8 @@ int* input_archive(Patricia* pat) {
     
     FILE *Input;
     FILE *Temp;
-    
+    int *counts;
+
     //Define qual será o arquivo que comtém os arquivos TCC
     Input = fopen("entrada.txt", "r");
     char line[64];
@@ -65,7 +66,7 @@ int* input_archive(Patricia* pat) {
 }
 
 
-void readout_archive(FILE* TCC, int file_id, Patricia* pat) {
+void readout_archive(FILE* TCC, int file_id, Patricia* pat,int* counts) {
     //Definindo um tamanho de linha e o tipo da palavra da qual permita
     // mexer com acentos sem grandes preocupações.
     wchar_t *palavra, line[1024],*ptr;
