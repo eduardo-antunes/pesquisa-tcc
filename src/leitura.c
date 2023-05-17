@@ -7,10 +7,11 @@
 #include "patricia.h"
 #include "leitura.h"
 
-void input_archive(Patricia* pat) {
+int* input_archive(Patricia* pat) {
     
     FILE *Input;
     FILE *Temp;
+    int* counts;
     
     //Define qual será o arquivo que comtém os arquivos TCC
     Input = fopen("entrada.txt", "r");
@@ -21,6 +22,10 @@ void input_archive(Patricia* pat) {
     // caracter a qauntidade de arquivos TCC presentes.
     int repet;
     fscanf(Input,"%d",&repet);
+
+    //Alocando dinamicamente o tamnho do vetor "counts" de acordo com a
+    // quantidade de arquivos TCC 
+    counts= (int*) calloc (repet,(sizeof(int)));
 
     //caso ERRO: Caso não exita ou não ache o arquivo "entrada.txt"
     if (Input == NULL) {
@@ -43,7 +48,7 @@ void input_archive(Patricia* pat) {
             }
             //Chama a função para passar as plavras do TCC atual para
             // a arvore Patricia.
-            readout_archive(Temp,i,pat);
+            readout_archive(Temp,i,pat,counts);
 
             //Fecha o arquivo TCC atual
             fclose(Temp);
@@ -57,10 +62,13 @@ void input_archive(Patricia* pat) {
     //Fecha o arquivo "entrada.txt"
     fclose(Input);
 
+    //Retornando o vetor counts
+    return counts;
+
 }
 
 
-void readout_archive(FILE* TCC, int file_id, Patricia* pat) {
+void readout_archive(FILE* TCC, int file_id, Patricia* pat, int* counts) {
     //Definindo um tamanho de linha e o tipo da palavra da qual permita
     // mexer com acentos sem grandes preocupações.
     wchar_t *palavra, line[1024],*ptr;
@@ -75,6 +83,11 @@ void readout_archive(FILE* TCC, int file_id, Patricia* pat) {
         for(int i = 0; line[i] != '\0';i++)
             line[i] = iswpunct(line[i]) ? ' ' : towlower(line[i]);
         palavra = wcstrtok(line, L" ",&ptr);
+        
+        //Incrmenta o número de palavras que foram armazenadas em
+        // cada arquivo, sendo o índice correspondente com um
+        // documento TCC
+        counts[file_id]++;
         do {
 
             //A palavra atual é inserida na árvore Patricia, e depois
@@ -82,6 +95,11 @@ void readout_archive(FILE* TCC, int file_id, Patricia* pat) {
             // e voltar para o primeiro "while" para ir para a próxima
             // linha.
             patricia_update(pat,palavra,file_id);
+            
+            //Incrmenta o número de palavras que foram armazenadas em
+            // cada arquivo, sendo o índice correspondente com um
+            // documento TCC
+            counts[file_id]++;
             palavra = wcstrtok(NULL, L" ",&ptr);
         } while (palavra != NULL);
     }
