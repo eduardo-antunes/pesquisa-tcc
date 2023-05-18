@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <wctype.h>
-
 #include "patricia.h"
 #include "leitura.h"
 
@@ -80,7 +79,7 @@ void readout_archive(FILE* TCC, int file_id, Patricia* pat,int* counts) {
         line[wcscspn(line, L"\n")] = '\0';
         for(int i = 0; line[i] != '\0';i++)
             line[i] = iswpunct(line[i]) ? ' ' : towlower(line[i]);
-        palavra = wcstrtok(line, L" ",&ptr);
+        palavra = wcstok(line, L" ",&ptr);
         do {
 
             //A palavra atual é inserida na árvore Patricia, e depois
@@ -88,7 +87,7 @@ void readout_archive(FILE* TCC, int file_id, Patricia* pat,int* counts) {
             // e voltar para o primeiro "while" para ir para a próxima
             // linha.
             patricia_update(pat,palavra,file_id);
-            palavra = wcstrtok(NULL, L" ",&ptr);
+            palavra = wcstok(NULL, L" ",&ptr);
         } while (palavra != NULL);
     }
 }
