@@ -134,6 +134,28 @@ int patricia_pairs(const Patricia_node *node, const wchar_t *word, Pair **pairs)
         return patricia_pairs(node->as.internal.right, word, pairs);
 }
 
+static void pcount(Patricia_node *node, int nr_files, int count[]) {
+    // Caso base: para uma árvore vazia, não fazemos nada
+    if(node == NULL) return;
+    if(node->node_t == NODE_LEAF) {
+        for(int i = 0; i < node->as.leaf.top; ++i) {
+            Pair *pairs = node->as.leaf.pairs;
+            count[pairs[i].file_id] += pairs[i].nr;
+        }
+        return;
+    }
+    // Se a o nó for interno, faça a contagem em suas duas subárvores
+    pcount(node->as.internal.left, nr_files, count);
+    pcount(node->as.internal.right, nr_files, count);
+}
+
+// Gera um vetor com a contagem de termos distintos em cada arquivo
+void patricia_count(const Patricia *pat, int count[]) {
+    for(int i = 0; i < pat->nr_files; ++i)
+        count[i] = 0;
+    pcount(pat->root, pat->nr_files, count);
+}
+
 // Função auxiliar para a desalocação
 static void pfree(Patricia_node *root) {
     if(root == NULL) return;

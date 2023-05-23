@@ -45,12 +45,12 @@ void patricia_update(Patricia *pat, const wchar_t *word, int file_id);
 // Obtém a lista de pares associada a uma palavra na árvore patrícia
 int patricia_pairs(const Patricia_node *node, const wchar_t *word, Pair **pairs);
 
+// Gera um vetor com a contagem de termos distintos em cada arquivo
+void patricia_count(const Patricia *pat, int count[]);
+
 // Desaloca a árvore patrícia
 void patricia_free(Patricia *pat);
 
-
 float TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int N, int doc_id, int ni);
-
-
 
 #endif // PESQUISA_TCC_PATRICIA_H
