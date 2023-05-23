@@ -2,6 +2,7 @@
 #define PESQUISA_TCC_PATRICIA_H
 
 #include <wchar.h>
+#include <math.h>
 
 // Par arquivo-contagem, utilizado para a definição de arquivo invertido
 typedef struct { int file_id, nr; } Pair;
@@ -46,5 +47,10 @@ int patricia_pairs(const Patricia_node *node, const wchar_t *word, Pair **pairs)
 
 // Desaloca a árvore patrícia
 void patricia_free(Patricia *pat);
+
+
+float TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int N, int doc_id, int ni);
+
+
 
 #endif // PESQUISA_TCC_PATRICIA_H

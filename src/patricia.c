@@ -1,5 +1,8 @@
 #include <wchar.h>
 #include <stdlib.h>
+#include <math.h>
+#include <stdio.h>
+
 #include "patricia.h"
 
 // Incrementa a contagem para um arquivo específico na lista de pares. Caso
@@ -146,3 +149,30 @@ void patricia_free(Patricia *pat) {
     pat->nr_files = 0;
     pfree(pat->root);
 }
+
+
+//Função para calcular a variável peso
+static float wcalc_weight(int oc, int dj , int doc_number) {
+    float w = oc * (log2f(doc_number) / dj);
+    return w;
+}
+
+
+float TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int N, int doc_id, int ni){
+    Pair *pairs;
+    int presence;
+    float w = 0;
+    for(int i =0; i < terms_inputs; i++){
+        presence = patricia_pairs(pat->root, m[i], &pairs);
+        for(int j = 0; j < presence; j++){
+            if(pairs[j].file_id == doc_id + 1){
+                w += wcalc_weight(pairs[j].nr, presence, N);
+            }
+        }
+        
+    }
+    printf("w = %.2f",w);
+    float ri = (1/(float)ni) * w;
+    return ri;
+}
+
