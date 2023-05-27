@@ -8,28 +8,27 @@
 
 int* input_archive(Patricia* pat) {
     
-    FILE *Input;
-    FILE *Temp;
+    FILE *input;
     int *counts;
 
     //Define qual será o arquivo que comtém os arquivos TCC
-    Input = fopen("entrada.txt", "r");
+    input = fopen("entrada.txt", "r");
     char line[64];
     
     //Recebe o primeiro caracter do "entrada.txt" e converte para um
     // numero, após subtrair 48 de seu valor em ASCII. Sendo esse
     // caracter a qauntidade de arquivos TCC presentes.
     int repet;
-    fscanf(Input,"%d",&repet);
+    fscanf(input,"%d",&repet);
 
     //Alocando dinamicamente o tamnho do vetor "counts" de acordo com a
     // quantidade de arquivos TCC 
-    counts= (int*) calloc (repet,(sizeof(int)));
+    counts = (int*) calloc (repet,(sizeof(int)));
 
     //caso ERRO: Caso não exita ou não ache o arquivo "entrada.txt"
-    if (Input == NULL) {
+    if (input == NULL) {
         fprintf(stderr, "Erro no arquivo");
-        return;
+        return counts;
     }
 
     //Passa por todo o arquivo, a partir do número de TCC's, pulando a
@@ -38,9 +37,9 @@ int* input_archive(Patricia* pat) {
         
         //Lê a linha atual a transformando em um caminho para acessar
         // determinado TCC.
-        if (fgets(line, sizeof(line), Input) != NULL) {
-            FILE *Temp = fopen(line, "r");
-            if (Temp == NULL) {
+        if (fgets(line, sizeof(line), input) != NULL) {
+            FILE *temp = fopen(line, "r");
+            if (temp == NULL) {
 
                 //caso ERRO: Caso não exita ou não ache o arquivo TCC
                 printf("Erro ao abrir o arquivo %s\n", line);
@@ -48,10 +47,10 @@ int* input_archive(Patricia* pat) {
             }
             //Chama a função para passar as plavras do TCC atual para
             // a arvore Patricia.
-            readout_archive(Temp,i,pat,counts);
+            readout_archive(temp,i,pat,counts);
 
             //Fecha o arquivo TCC atual
-            fclose(Temp);
+            fclose(temp);
         } else {
             //caso ERRO: Caso o arquivo "entrada.txt" for menor do que
             // o esperado
@@ -60,8 +59,8 @@ int* input_archive(Patricia* pat) {
         }
     }
     //Fecha o arquivo "entrada.txt"
-    fclose(Input);
-
+    fclose(input);
+    return counts;
 }
 
 
@@ -86,6 +85,7 @@ void readout_archive(FILE* TCC, int file_id, Patricia* pat,int* counts) {
             // passa para a proxíma palavras da linha até acabar a linha
             // e voltar para o primeiro "while" para ir para a próxima
             // linha.
+            ++counts[file_id];
             patricia_update(pat,palavra,file_id);
             palavra = wcstok(NULL, L" ",&ptr);
         } while (palavra != NULL);

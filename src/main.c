@@ -1,8 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <wchar.h>
 #include <math.h>
 #include "patricia.h"
-#include <wchar.h>
-#include <string.h>
 
 #define max_tam 4
 #define max_lenght 1024
@@ -29,7 +30,7 @@
 
 
 wchar_t **vetor_aloc(int num_string, int tam_strings){
-    wchar_t **temp = (wchar_t *) malloc(num_string *  sizeof(wchar_t *));
+    wchar_t **temp = (wchar_t **) malloc(num_string *  sizeof(wchar_t *));
 
     for(int i =0; i < num_string; i++){
         temp[i] = malloc(tam_strings * sizeof(wchar_t));
@@ -78,7 +79,6 @@ int main(void) {
             for(int i = 0; i < temp_doc_number; i++){
                 printf("TF do doc %d = %.2f\n",i,TF_IDF(input_words, temp_4x, &pat, temp_doc_number, i, temp_exp[i]));
             }
-
         }
     } 
 
