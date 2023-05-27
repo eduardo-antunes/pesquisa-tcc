@@ -1,3 +1,9 @@
+
+
+
+
+
+
 #ifndef PESQUISA_TCC_PATRICIA_H
 #define PESQUISA_TCC_PATRICIA_H
 
@@ -9,6 +15,9 @@ typedef struct { int file_id, nr; } Pair;
 
 // Tipo de nó na árvore patrícia: interno ou folha
 typedef enum { NODE_INT, NODE_LEAF } Patricia_t;
+
+// Tipo para armazenar o id do arquivo junto com a sua relevância no momento
+typedef struct{int file_id; float relevance}doc_relevance;
 
 // Definição de um nó da patrícia
 typedef struct node {
@@ -51,6 +60,9 @@ void patricia_count(const Patricia *pat, int count[]);
 // Desaloca a árvore patrícia
 void patricia_free(Patricia *pat);
 
-float TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int N, int doc_id, int ni);
+// calcula a relevância
+//void TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int N, int ni, doc_relevance *docs);
 
+//ordena os documentos
+void user_relevance(const wchar_t **m, int terms_inputs,  Patricia *pat, int doc_number, int ni, doc_relevance *docs);
 #endif // PESQUISA_TCC_PATRICIA_H

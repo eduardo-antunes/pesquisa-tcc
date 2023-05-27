@@ -1,3 +1,8 @@
+
+
+
+
+
 #include <wchar.h>
 #include <string.h>
 #include <stdlib.h>
@@ -42,7 +47,7 @@ int* input_archive(Patricia* pat) {
             if (temp == NULL) {
 
                 //caso ERRO: Caso não exita ou não ache o arquivo TCC
-                printf("Erro ao abrir o arquivo %s\n", line);
+                wprintf(L"Erro ao abrir o arquivo %s\n", line);
                 continue;
             }
             //Chama a função para passar as plavras do TCC atual para
@@ -54,7 +59,7 @@ int* input_archive(Patricia* pat) {
         } else {
             //caso ERRO: Caso o arquivo "entrada.txt" for menor do que
             // o esperado
-            printf("Erro: arquivo de entrada inesperadamente curto\n");
+            wprintf(L"Erro: arquivo de entrada inesperadamente curto\n");
             break;
         }
     }

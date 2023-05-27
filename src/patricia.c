@@ -1,3 +1,12 @@
+
+
+
+/*Grupo 3
+*/
+
+
+
+
 #include <wchar.h>
 #include <stdlib.h>
 #include <math.h>
@@ -173,28 +182,63 @@ void patricia_free(Patricia *pat) {
 }
 
 
-//Função para calcular a variável peso
-static float wcalc_weight(int oc, int dj , int doc_number) {
+//Função de auxilio para calcular a variável peso
+static float calc_weight(int oc, int dj , int doc_number) {
     float w = oc * (log2f(doc_number) / dj);
     return w;
 }
 
-
-float TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int N, int doc_id, int ni){
+// Função para o calculo do valor relevância baseado em termos para cada documento na coleção
+void TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int N, int ni[], doc_relevance *docs){
     Pair *pairs;
-    int presence;
-    float w = 0;
-    for(int i =0; i < terms_inputs; i++){
-        presence = patricia_pairs(pat->root, m[i], &pairs);
-        for(int j = 0; j < presence; j++){
-            if(pairs[j].file_id == doc_id + 1){
-                w += wcalc_weight(pairs[j].nr, presence, N);
+    int presence, doc_id = 0;
+    for(int k = 0; k < N; k++) { 
+        float w = 0;
+        for(int i =0; i < terms_inputs; i++){
+            presence = patricia_pairs(pat->root, m[i], &pairs);
+            //wprintf(L"presence = %d\n",presence);
+            if(presence != -1) {
+                for(int j = 0; j < presence; j++) {
+                    if(pairs[j].file_id == doc_id ){
+                        w += calc_weight(pairs[j].nr, presence, N);
+                    }
+                }
+            }
+            
+            
+        }
+        float ri = (1/(float)ni[k]) * w;
+        docs[k].relevance = ri;
+        doc_id++;
+        ni++;
+    }
+}
+
+
+
+
+// Função para ordenar os documentos por ordem de relevância
+static void docs_sort(doc_relevance *docs, int doc_number) {
+    int i, j, max;
+    doc_relevance aux;
+    for(i = 0; i < doc_number - 1; i++){
+        max = i;
+        for(j = 0; j < doc_number ; j++){
+            if(docs[j].relevance > docs[max].relevance){
+                max = j;
             }
         }
         
+        aux = docs[max];
+        docs[max] = docs[i];
+        docs[i] = aux;
+        
+        
     }
-    printf("w = %.2f",w);
-    float ri = (1/(float)ni) * w;
-    return ri;
 }
-
+// Função principal para o calculo e impressão baseado na relevância do documento
+void user_relevance(const wchar_t **m, int terms_inputs,  Patricia *pat, int doc_number, int ni, doc_relevance *docs) {
+    TF_IDF(m, terms_inputs, pat, doc_number, ni, docs);
+    docs_sort(docs, doc_number);
+    
+}
