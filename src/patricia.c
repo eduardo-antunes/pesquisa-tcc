@@ -189,14 +189,13 @@ static float calc_weight(int oc, int dj , int doc_number) {
 }
 
 // Função para o calculo do valor relevância baseado em termos para cada documento na coleção
-void TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int N, int ni[], doc_relevance *docs){
+static void TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int N, int ni[], doc_relevance *docs){
     Pair *pairs;
     int presence, doc_id = 0;
     for(int k = 0; k < N; k++) { 
         float w = 0;
         for(int i =0; i < terms_inputs; i++){
             presence = patricia_pairs(pat->root, m[i], &pairs);
-            //wprintf(L"presence = %d\n",presence);
             if(presence != -1) {
                 for(int j = 0; j < presence; j++) {
                     if(pairs[j].file_id == doc_id ){
