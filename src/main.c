@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include "leitura.h"
 #define max_tam 4
-#define max_lenght 1024
+#define max_lenght 64
 
 
 // Função para criação de um vetor de strings wchar para o input de termos do usuário

@@ -60,9 +60,7 @@ void patricia_count(const Patricia *pat, int count[]);
 // Desaloca a árvore patrícia
 void patricia_free(Patricia *pat);
 
-// calcula a relevância
-//void TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int N, int ni, doc_relevance *docs);
 
-//ordena os documentos
+//calcula a relevância e ordena os documentos 
 void user_relevance(const wchar_t **m, int terms_inputs,  Patricia *pat, int doc_number, int ni, doc_relevance *docs);
 #endif // PESQUISA_TCC_PATRICIA_H
