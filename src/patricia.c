@@ -225,6 +225,7 @@ static void docs_sort(doc_relevance *docs, int doc_number) {
         
     }
 }
+// função que inicializa um array que é usado para armazer os valores de relevância
 static void array_init(doc_relevance *docs, int doc_number){
     for(int i =0; i < doc_number; i++){
         docs[i].file_id = i;
@@ -237,7 +238,7 @@ void user_relevance(const wchar_t **m, int terms_inputs,  Patricia *pat, int doc
     docs_sort(docs, doc_number);
 }
 
-
+// função que retorna a quantidade de documentos que possue o termo em seus pares
 int olpat_pair(int *array, int n_docs){
     int count = 0;
     for(int i =0; i < n_docs; i++){

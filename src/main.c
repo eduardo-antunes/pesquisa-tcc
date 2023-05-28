@@ -15,7 +15,7 @@ Pedro Augusto Martins Pereira - 4692
 #include "patricia.h"
 #include "leitura.h"
 
-#define MAX_TAM 4
+#define MAX_TAM 2
 #define MAX_LENGHT 64
 
 // Função para criação de um vetor de strings wchar para o input de termos do usuário
