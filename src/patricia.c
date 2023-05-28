@@ -1,16 +1,7 @@
-
-
-
-/*Grupo 3
-*/
-
-
-
-
-#include <wchar.h>
-#include <stdlib.h>
-#include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <wchar.h>
+#include <math.h>
 
 #include "patricia.h"
 
@@ -18,16 +9,7 @@
 // não haja um par com o id de arquivo procurado, cria-o
 static void leaf_inc(Patricia_node *node, int file_id) {
     if(node->node_t != NODE_LEAF) return;
-    for(int i = 0; i < node->as.leaf.top; ++i) {
-        if(node->as.leaf.pairs[i].file_id == file_id) {
-            ++node->as.leaf.pairs[i].nr;
-            return;
-        }
-    }
-    // Caso particular: a palavra não foi registrada para esse arquivo
-    node->as.leaf.pairs[node->as.leaf.top].file_id = file_id;
-    node->as.leaf.pairs[node->as.leaf.top].nr = 1;
-    ++node->as.leaf.top;
+    ++node->as.leaf.counts[file_id];
 }
 
 // Aloca um novo nó interno para a árvore patrícia
@@ -44,10 +26,9 @@ static Patricia_node *node_alloc(int index, wchar_t ch, Patricia_node *left, Pat
 // Aloca um novo nó folha para a árvore patrícia
 static Patricia_node *leaf_alloc(int nr_files, const wchar_t *word) {
     Patricia_node *node = (Patricia_node*) malloc(sizeof(Patricia_node));
-    node->as.leaf.pairs = (Pair*) malloc(sizeof(Pair) * nr_files);
-    wcsncpy(node->as.leaf.word, word, 64);
-    node->as.leaf.word[63] = 0;
-    node->as.leaf.top = 0;
+    node->as.leaf.counts = (int*) calloc(nr_files, sizeof(int));
+    wcsncpy(node->as.leaf.word, word, WORD_SIZE);
+    node->as.leaf.word[WORD_SIZE - 1] = 0;
     node->node_t = NODE_LEAF;
     return node;
 }
@@ -55,7 +36,7 @@ static Patricia_node *leaf_alloc(int nr_files, const wchar_t *word) {
 // Desaloca um nó da árvore patrícia, independente do tipo
 static void node_free(Patricia_node *node) {
     if(node->node_t == NODE_LEAF)
-        free(node->as.leaf.pairs);
+        free(node->as.leaf.counts);
     free(node);
 }
 
@@ -81,9 +62,12 @@ static void patricia_insert(Patricia_node **root_ptr, int nr_files, int index,
         const wchar_t *word, wchar_t letter, int file_id) {
     // Caso base: ponto de inserção encontrado
     if((*root_ptr)->node_t == NODE_LEAF || index < (*root_ptr)->as.internal.index) {
-        Patricia_node *node = leaf_alloc(nr_files, word), *aux = *root_ptr;
-        *root_ptr = (word[index] <= letter) ? node_alloc(index, word[index], node, aux)
-            : node_alloc(index, letter, aux, node);
+        Patricia_node *node = leaf_alloc(nr_files, word), *old = *root_ptr;
+        if(word[index] <= letter) {
+            *root_ptr = node_alloc(index, word[index], node, old);
+        } else {
+            *root_ptr = node_alloc(index, letter, old, node);
+        }
         leaf_inc(node, file_id);
         return;
     }
@@ -120,49 +104,49 @@ void patricia_update(Patricia *pat, const wchar_t *word, int file_id) {
             node->as.leaf.word[index], file_id);
 }
 
-// Obtém a lista de pares associada a uma palavra na árvore patrícia
-int patricia_pairs(const Patricia_node *node, const wchar_t *word, Pair **pairs) {
+// Obtém a lista de contagens para cada arquivo de uma palavra em particular
+int *patricia_get(const Patricia *pat, const wchar_t *word) {
     // Caso base: árvore vazia
-    if(node == NULL) {
-        *pairs = NULL;
-        return -1;
+    if(pat->root == NULL) 
+        return NULL;
+    // Percurso iterativo pela árvore patrícia
+    Patricia_node *node = pat->root;
+    while(node->node_t != NODE_LEAF) {
+        if(word[node->as.internal.index] <= node->as.internal.ch)
+            node = node->as.internal.left;
+        else
+            node = node->as.internal.right;
     }
-    // Caso base: árvore unitária
-    if(node->node_t == NODE_LEAF) {
-        if(wcscmp(word, node->as.leaf.word) == 0) {
-            *pairs = node->as.leaf.pairs;
-            return node->as.leaf.top;
-        }
-        *pairs = NULL;
-        return -1;
-    }
-    // Percurso recursivo pela árvore
-    if(word[node->as.internal.index] <= node->as.internal.ch)
-        return patricia_pairs(node->as.internal.left, word, pairs);
-    else
-        return patricia_pairs(node->as.internal.right, word, pairs);
+    // A palavra que procuramos está na árvore? Se sim, retornamos a sua
+    // lista de contagens para cada arquivo
+    if(wcscmp(node->as.leaf.word, word) == 0)
+        return node->as.leaf.counts;
+    return NULL; // de contrário, não há o que fazer
 }
 
-static void pcount(Patricia_node *node, int nr_files, int count[]) {
-    // Caso base: para uma árvore vazia, não fazemos nada
+// Função auxiliar para a contagem de termos distintos em cada arquivo
+static void pcount(Patricia_node *node, int nr_files, int total_count[]) {
+    // Caso base: subárvore vazia
     if(node == NULL) return;
+    // Caso particular: nó folha, coleção das suas contagens
     if(node->node_t == NODE_LEAF) {
-        for(int i = 0; i < node->as.leaf.top; ++i) {
-            Pair *pairs = node->as.leaf.pairs;
-            count[pairs[i].file_id] += pairs[i].nr;
+        for(int file_id = 0; file_id < nr_files; ++file_id) {
+            // Contamos apenas a primeira ocorrência de cada termo
+            if(node->as.leaf.counts[file_id] > 0)
+                ++total_count[file_id];
         }
         return;
     }
-    // Se a o nó for interno, faça a contagem em suas duas subárvores
-    pcount(node->as.internal.left, nr_files, count);
-    pcount(node->as.internal.right, nr_files, count);
+    // Caso partiular: nó interno, contagem das suas subárvores
+    pcount(node->as.internal.left, nr_files, total_count);
+    pcount(node->as.internal.right, nr_files, total_count);
 }
 
 // Gera um vetor com a contagem de termos distintos em cada arquivo
-void patricia_count(const Patricia *pat, int count[]) {
+void patricia_count(const Patricia *pat, int total_count[]) {
     for(int i = 0; i < pat->nr_files; ++i)
-        count[i] = 0;
-    pcount(pat->root, pat->nr_files, count);
+        total_count[i] = 0;
+    pcount(pat->root, pat->nr_files, total_count);
 }
 
 // Função auxiliar para a desalocação
@@ -181,8 +165,7 @@ void patricia_free(Patricia *pat) {
     pfree(pat->root);
 }
 
-
-//Função de auxilio para calcular a variável peso
+// Função de auxilio para calcular a variável peso
 static float calc_weight(int oc, int dj , int doc_number) {
     float w = oc * (log2f(doc_number) / dj);
     return w;
@@ -190,31 +173,21 @@ static float calc_weight(int oc, int dj , int doc_number) {
 
 // Função para o calculo do valor relevância baseado em termos para cada documento na coleção
 static void TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int N, int ni[], doc_relevance *docs){
-    Pair *pairs;
-    int presence, doc_id = 0;
+    int *counts;
     for(int k = 0; k < N; k++) { 
         float w = 0;
         for(int i =0; i < terms_inputs; i++){
-            presence = patricia_pairs(pat->root, m[i], &pairs);
-            if(presence != -1) {
-                for(int j = 0; j < presence; j++) {
-                    if(pairs[j].file_id == doc_id ){
-                        w += calc_weight(pairs[j].nr, presence, N);
-                    }
+            counts = patricia_get(pat, m[i]);
+            if(counts != NULL) {
+                for(int file_id = 0; file_id < pat->nr_files; file_id++) {
+                    w += calc_weight(counts[file_id], pat->nr_files, N);
                 }
             }
-            
-            
         }
         float ri = (1/(float)ni[k]) * w;
         docs[k].relevance = ri;
-        doc_id++;
-        ni++;
     }
 }
-
-
-
 
 // Função para ordenar os documentos por ordem de relevância
 static void docs_sort(doc_relevance *docs, int doc_number) {
@@ -227,7 +200,6 @@ static void docs_sort(doc_relevance *docs, int doc_number) {
                 max = j;
             }
         }
-        
         aux = docs[max];
         docs[max] = docs[i];
         docs[i] = aux;
@@ -237,7 +209,6 @@ static void docs_sort(doc_relevance *docs, int doc_number) {
 }
 // Função principal para o calculo e impressão baseado na relevância do documento
 void user_relevance(const wchar_t **m, int terms_inputs,  Patricia *pat, int doc_number, int ni, doc_relevance *docs) {
-    TF_IDF(m, terms_inputs, pat, doc_number, ni, docs);
+    TF_IDF(m, terms_inputs, pat, doc_number, &ni, docs);
     docs_sort(docs, doc_number);
-    
 }

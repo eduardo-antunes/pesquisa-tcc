@@ -1,23 +1,16 @@
-
-
-
-
-
-
 #ifndef PESQUISA_TCC_PATRICIA_H
 #define PESQUISA_TCC_PATRICIA_H
 
+#define WORD_SIZE 64
+
 #include <wchar.h>
 #include <math.h>
-
-// Par arquivo-contagem, utilizado para a definição de arquivo invertido
-typedef struct { int file_id, nr; } Pair;
 
 // Tipo de nó na árvore patrícia: interno ou folha
 typedef enum { NODE_INT, NODE_LEAF } Patricia_t;
 
 // Tipo para armazenar o id do arquivo junto com a sua relevância no momento
-typedef struct{int file_id; float relevance}doc_relevance;
+typedef struct{int file_id; float relevance; } doc_relevance;
 
 // Definição de um nó da patrícia
 typedef struct node {
@@ -30,9 +23,8 @@ typedef struct node {
             struct node *right;
         } internal;
         struct {
-            int top;
-            Pair *pairs;
-            wchar_t word[64];
+            int *counts;
+            wchar_t word[WORD_SIZE];
         } leaf;
     } as;
 } Patricia_node;
@@ -51,16 +43,16 @@ void patricia_init(Patricia *pat, int nr_files);
 // nesse arquivo ou não exista na patrícia, cria o que for necessário
 void patricia_update(Patricia *pat, const wchar_t *word, int file_id);
 
-// Obtém a lista de pares associada a uma palavra na árvore patrícia
-int patricia_pairs(const Patricia_node *node, const wchar_t *word, Pair **pairs);
+// Obtém a lista de contagens para cada arquivo de uma palavra em particular
+int *patricia_get(const Patricia *pat, const wchar_t *word);
 
 // Gera um vetor com a contagem de termos distintos em cada arquivo
-void patricia_count(const Patricia *pat, int count[]);
+void patricia_count(const Patricia *pat, int total_count[]);
 
 // Desaloca a árvore patrícia
 void patricia_free(Patricia *pat);
 
-
 //calcula a relevância e ordena os documentos 
 void user_relevance(const wchar_t **m, int terms_inputs,  Patricia *pat, int doc_number, int ni, doc_relevance *docs);
+
 #endif // PESQUISA_TCC_PATRICIA_H

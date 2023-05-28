@@ -1,77 +1,49 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wchar.h>
-#include <math.h>
-#include "patricia.h"
-#include <wchar.h>
-#include <string.h>
 #include <wctype.h>
-#include <stdlib.h>
-#include "leitura.h"
-#define max_tam 4
-#define max_lenght 64
+#include <wchar.h>
+#include <locale.h>
 
+#include "patricia.h"
+#include "leitura.h"
+
+#define MAX_TAM 4
+#define MAX_LENGHT 64
 
 // Função para criação de um vetor de strings wchar para o input de termos do usuário
 wchar_t **vetor_aloc(int num_string, int tam_strings){
     wchar_t **temp = (wchar_t **) malloc(num_string *  sizeof(wchar_t *));
-
     for(int i =0; i < num_string; i++){
         temp[i] = malloc(tam_strings * sizeof(wchar_t));
     }
-
     return temp;
 }
 
 int main(void) {
-    Patricia pat;
-    int nr_files = 5;
-    int ni[nr_files];
-    patricia_init(&pat, nr_files); 
-
-    input_archive(&pat);
-    doc_relevance temp_relevance[nr_files];
-    
-
-    
-
-    wchar_t **input_words  = vetor_aloc(max_tam, max_lenght);
-
-
-    
-
-    int terms_num;
-    wprintf(L"termos:");
-    
-    wscanf(L"%d",&terms_num);
-    fflush(stdin);
-
-    for(int i = 0; i < terms_num; i++){
-        wscanf(L"%ls[^\r\n]", input_words[i]);
-        fflush(stdin);
-
+    setlocale(LC_ALL, "Portuguese");
+    // Abre o arquivo de entrada principal
+    FILE *input = fopen("entrada.txt", "r");
+    if(input == NULL) {
+        fprintf(stderr, "Não foi possível abrir o arquivo 'entrada.txt'\n");
+        return 1;
     }
 
+    // Inicializa a patrícia com o número contido na primeira linha do arquivo
+    // de entrada, que corresponde a quantidade de arquivos que serão considerados
+    // na pesquisa
+    Patricia pat; int nr_files;
+    fscanf(input, "%d", &nr_files);
+    patricia_init(&pat, nr_files);
 
+    // Preenche a árvore patrícia a partir dos arquivos de entrada
+    input_archive(input, nr_files, &pat);
 
-    patricia_count(&pat, ni);
-    for(int i =0; i < nr_files; i++){
-        wprintf(L"termos distintos doc %d: %d\n",i,ni[i]);
-    }
-            
-    
-
-
-    user_relevance(input_words, terms_num, &pat, nr_files, 7, temp_relevance); // falta a qtdade de terms !=
-
-    
-    
-    for(int i=0; i < nr_files; i++){
-        wprintf(L"%.2f\n",temp_relevance[i].relevance);
-    }
-
+    int count[nr_files];
+    patricia_count(&pat, count);
+    printf("== Informações gerais ==\n");
+    for(int i = 0; i < nr_files; ++i)
+        printf("O arquivo #%d contém %d termos distintos\n", i, count[i]);
     patricia_free(&pat);
-
     return 0;
 }
