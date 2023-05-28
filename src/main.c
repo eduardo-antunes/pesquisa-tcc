@@ -1,3 +1,10 @@
+/*GRUPO 3
+Eduardo Antunes dos Santos Vieira - 5076
+Gabriel Benez Duarte Costa - 4701
+Lucas Fonseca Sabino Lana - 5105
+Pedro Augusto Martins Pereira - 4692
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,16 +41,33 @@ int main(void) {
     // na pesquisa
     Patricia pat; int nr_files;
     fscanf(input, "%d", &nr_files);
+    doc_relevance relevance_docs[nr_files];
     patricia_init(&pat, nr_files);
 
     // Preenche a árvore patrícia a partir dos arquivos de entrada
     input_archive(input, nr_files, &pat);
 
     int count[nr_files];
+    
+    
+    
+    
     patricia_count(&pat, count);
     printf("== Informações gerais ==\n");
-    for(int i = 0; i < nr_files; ++i)
+    for(int i = 0; i < nr_files; ++i) {
         printf("O arquivo #%d contém %d termos distintos\n", i, count[i]);
+    }   
+    
+    wchar_t **input_words = vetor_aloc(MAX_TAM, MAX_LENGHT);
+    for(int i =0; i < 2; i++){
+        wscanf(L"%ls[^\r\n]",input_words[i]);
+    }
+    user_relevance(input_words, 2, &pat, nr_files, relevance_docs);
+
+    for(int i =0; i < nr_files; i++){
+        printf("Doc %d relevance %.2f\n",relevance_docs[i].file_id, relevance_docs[i].relevance);
+    }
+
     patricia_free(&pat);
     return 0;
 }

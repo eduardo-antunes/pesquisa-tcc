@@ -1,3 +1,10 @@
+/*GRUPO 3
+Eduardo Antunes dos Santos Vieira - 5076
+Gabriel Benez Duarte Costa - 4701
+Lucas Fonseca Sabino Lana - 5105
+Pedro Augusto Martins Pereira - 4692
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 

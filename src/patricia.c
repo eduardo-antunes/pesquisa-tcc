@@ -1,3 +1,10 @@
+/*GRUPO 3
+Eduardo Antunes dos Santos Vieira - 5076
+Gabriel Benez Duarte Costa - 4701
+Lucas Fonseca Sabino Lana - 5105
+Pedro Augusto Martins Pereira - 4692
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <wchar.h>
@@ -167,23 +174,34 @@ void patricia_free(Patricia *pat) {
 
 // Função de auxilio para calcular a variável peso
 static float calc_weight(int oc, int dj , int doc_number) {
+    //wprintf(L"oc = %d",oc);
+    //wprintf(L" dj = %d",dj);
+    //wprintf(L" doc_num = %d\n",doc_number);
     float w = oc * (log2f(doc_number) / dj);
     return w;
 }
 
 // Função para o calculo do valor relevância baseado em termos para cada documento na coleção
-static void TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int N, int ni[], doc_relevance *docs){
+static void TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int n_docs, doc_relevance *docs){
+    int ni[n_docs];
+    patricia_count(pat, ni);
+
     int *counts;
-    for(int k = 0; k < N; k++) { 
+    for(int k = 0; k < n_docs; k++) { 
         float w = 0;
         for(int i =0; i < terms_inputs; i++){
             counts = patricia_get(pat, m[i]);
             if(counts != NULL) {
-                for(int file_id = 0; file_id < pat->nr_files; file_id++) {
-                    w += calc_weight(counts[file_id], pat->nr_files, N);
+                for(int file_id = 0; file_id < n_docs; file_id++) {
+                    if(file_id == k){
+                        int temp = olpat_pair(counts, n_docs);
+                        w += calc_weight(counts[file_id], temp, n_docs);
+
+                    }
                 }
             }
         }
+
         float ri = (1/(float)ni[k]) * w;
         docs[k].relevance = ri;
     }
@@ -195,7 +213,7 @@ static void docs_sort(doc_relevance *docs, int doc_number) {
     doc_relevance aux;
     for(i = 0; i < doc_number - 1; i++){
         max = i;
-        for(j = 0; j < doc_number ; j++){
+        for(j = i+ 1; j < doc_number ; j++){
             if(docs[j].relevance > docs[max].relevance){
                 max = j;
             }
@@ -207,8 +225,26 @@ static void docs_sort(doc_relevance *docs, int doc_number) {
         
     }
 }
+static void array_init(doc_relevance *docs, int doc_number){
+    for(int i =0; i < doc_number; i++){
+        docs[i].file_id = i;
+    }
+}
 // Função principal para o calculo e impressão baseado na relevância do documento
-void user_relevance(const wchar_t **m, int terms_inputs,  Patricia *pat, int doc_number, int ni, doc_relevance *docs) {
-    TF_IDF(m, terms_inputs, pat, doc_number, &ni, docs);
+void user_relevance(const wchar_t **m, int terms_inputs,  Patricia *pat, int doc_number,  doc_relevance *docs) {
+    array_init(docs, doc_number);
+    TF_IDF(m, terms_inputs, pat, doc_number, docs);
     docs_sort(docs, doc_number);
 }
+
+
+int olpat_pair(int *array, int n_docs){
+    int count = 0;
+    for(int i =0; i < n_docs; i++){
+        if(array[i] != 0){
+            count++;
+        }
+    }
+    return count;
+}
+

@@ -1,3 +1,10 @@
+/*GRUPO 3
+Eduardo Antunes dos Santos Vieira - 5076
+Gabriel Benez Duarte Costa - 4701
+Lucas Fonseca Sabino Lana - 5105
+Pedro Augusto Martins Pereira - 4692
+*/
+
 #ifndef PESQUISA_TCC_PATRICIA_H
 #define PESQUISA_TCC_PATRICIA_H
 
@@ -53,6 +60,6 @@ void patricia_count(const Patricia *pat, int total_count[]);
 void patricia_free(Patricia *pat);
 
 //calcula a relevância e ordena os documentos 
-void user_relevance(const wchar_t **m, int terms_inputs,  Patricia *pat, int doc_number, int ni, doc_relevance *docs);
+void user_relevance(const wchar_t **m, int terms_inputs,  Patricia *pat, int doc_number, doc_relevance *docs);
 
 #endif // PESQUISA_TCC_PATRICIA_H
