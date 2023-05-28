@@ -59,10 +59,10 @@ int main(void) {
     }   
     
     wchar_t **input_words = vetor_aloc(MAX_TAM, MAX_LENGHT);
-    for(int i =0; i < 2; i++){
+    for(int i =0; i < MAX_TAM; i++){
         wscanf(L"%ls[^\r\n]",input_words[i]);
     }
-    user_relevance(input_words, 2, &pat, nr_files, relevance_docs);
+    user_relevance(input_words, MAX_TAM, &pat, nr_files, relevance_docs);
 
     for(int i =0; i < nr_files; i++){
         printf("Doc %d relevance %.2f\n",relevance_docs[i].file_id, relevance_docs[i].relevance);
