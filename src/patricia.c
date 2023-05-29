@@ -162,12 +162,12 @@ static void pprint(Patricia_node *node, int nr_files, FILE *fp) {
     if(node == NULL) return;
     // Caso particular: nó folha, exibição de seus conteúdos
     if(node->node_t == NODE_LEAF) {
-        fwprintf(fp, L"== Palavra: \"%ls\" ==\n", node->as.leaf.word);
+        fprintf(fp, "== Palavra: \"%ls\" ==\n", node->as.leaf.word);
         for(int file_id = 0; file_id < nr_files; ++file_id)
             if(node->as.leaf.counts[file_id] > 0)
-                fwprintf(fp, L"Arq. #%d: %d ocorrência(s)\n", file_id,
+                fprintf(fp, "Arq. #%d: %d ocorrência(s)\n", file_id,
                     node->as.leaf.counts[file_id]);
-        fwprintf(fp, L"\n");
+        fprintf(fp, "\n");
         return;
     }
     // Caso particular: nó interno, percurso nas duas subárvores
