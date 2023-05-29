@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <wctype.h>
-#include <wchar.h>
 /*GRUPO 3
 Eduardo Antunes dos Santos Vieira - 5076
 Gabriel Benez Duarte Costa - 4701
@@ -10,17 +5,23 @@ Lucas Fonseca Sabino Lana - 5105
 Pedro Augusto Martins Pereira - 4692
 */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <wctype.h>
+#include <wchar.h>
+
 #include "patricia.h"
 #include "leitura.h"
 
 // Lê o arquivo de entrada principal a partir da segunda linha, processando
 // cada arquivo na lista nele contida individualmente. Esse processamento
 // insere todos os termos identificados na árvore patrícia
-void input_archive(FILE *input, int nr_files, Patricia* pat) {
+void input_archive(FILE *input, char *filenames[], Patricia* pat) {
     char name[64];
     int file_id = 0;
     // Percorre a entrada principal, processando cada arquivo na lista
-    while(file_id < nr_files) {
+    while(file_id < pat->nr_files) {
         // Cada linha individual corresponde a um arquivo
         if(fgets(name, 64, input) == NULL) {
             fprintf(stderr, "Arquivo de entrada principal mais curto que o esperado\n");
@@ -28,6 +29,9 @@ void input_archive(FILE *input, int nr_files, Patricia* pat) {
         }
         name[strcspn(name, "\r\n")] = 0;
         if(name[0] == 0) continue; // linha vazia
+        // Salva a associação entre nomes e IDs de arquivos
+        filenames[file_id] = (char*) malloc(sizeof(char) * 64);
+        strncpy(filenames[file_id], name, 64);
 
         // Abre o arquivo de TCC cujo nome foi lido
         FILE *tcc = fopen(name, "r, ccs=UTF-8");

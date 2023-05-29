@@ -17,7 +17,7 @@ Pedro Augusto Martins Pereira - 4692
 typedef enum { NODE_INT, NODE_LEAF } Patricia_t;
 
 // Tipo para armazenar o id do arquivo junto com a sua relevância no momento
-typedef struct{int file_id; float relevance; } doc_relevance;
+typedef struct{ int file_id; double relevance; } doc_relevance;
 
 // Definição de um nó da patrícia
 typedef struct node {
@@ -56,10 +56,13 @@ int *patricia_get(const Patricia *pat, const wchar_t *word);
 // Gera um vetor com a contagem de termos distintos em cada arquivo
 void patricia_count(const Patricia *pat, int total_count[]);
 
+// Direciona ordenadamente para o arquivo dado os conteúdos da árvore patrícia
+void patricia_print(const Patricia *pat, FILE *fp);
+
 // Desaloca a árvore patrícia
 void patricia_free(Patricia *pat);
 
-//calcula a relevância e ordena os documentos 
-void user_relevance(const wchar_t **m, int terms_inputs,  Patricia *pat, int doc_number, doc_relevance *docs);
+// Calcula a relevância e ordena os documentos 
+void user_relevance(wchar_t *words[], int terms_inputs,  Patricia *pat, doc_relevance *docs);
 
 #endif // PESQUISA_TCC_PATRICIA_H

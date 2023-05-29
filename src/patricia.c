@@ -156,6 +156,30 @@ void patricia_count(const Patricia *pat, int total_count[]) {
     pcount(pat->root, pat->nr_files, total_count);
 }
 
+// Função auxiliar para o direcionamento do conteúdo da árvore patrícia
+static void pprint(Patricia_node *node, int nr_files, FILE *fp) {
+    // Caso base: subárvore vazia
+    if(node == NULL) return;
+    // Caso particular: nó folha, exibição de seus conteúdos
+    if(node->node_t == NODE_LEAF) {
+        fwprintf(fp, L"== Palavra: \"%ls\" ==\n", node->as.leaf.word);
+        for(int file_id = 0; file_id < nr_files; ++file_id)
+            if(node->as.leaf.counts[file_id] > 0)
+                fwprintf(fp, L"Arq. #%d: %d ocorrência(s)\n", file_id,
+                    node->as.leaf.counts[file_id]);
+        fwprintf(fp, L"\n");
+        return;
+    }
+    // Caso particular: nó interno, percurso nas duas subárvores
+    pprint(node->as.internal.left, nr_files, fp);
+    pprint(node->as.internal.right, nr_files, fp);
+}
+
+// Direciona ordenadamente para o arquivo dado os conteúdos da árvore patrícia
+void patricia_print(const Patricia *pat, FILE *fp) {
+    pprint(pat->root, pat->nr_files, fp); // sim, é só isso
+}
+
 // Função auxiliar para a desalocação
 static void pfree(Patricia_node *root) {
     if(root == NULL) return;
@@ -172,48 +196,42 @@ void patricia_free(Patricia *pat) {
     pfree(pat->root);
 }
 
-// Função de auxilio para calcular a variável peso
-static float calc_weight(int oc, int dj , int doc_number) {
-    //wprintf(L"oc = %d",oc);
-    //wprintf(L" dj = %d",dj);
-    //wprintf(L" doc_num = %d\n",doc_number);
-    float w = oc * (log2f(doc_number) / dj);
+// Função auxiliar para calcular a variável peso
+static double calc_weight(int oc, int dj, int nr_files) {
+    double w = oc * (log2(nr_files) / dj);
     return w;
 }
 
 // Função para o calculo do valor relevância baseado em termos para cada documento na coleção
-static void TF_IDF(const wchar_t **m, int terms_inputs,  Patricia *pat, int n_docs, doc_relevance *docs){
-    int ni[n_docs];
+static void tf_idf(wchar_t *words[], int terms_inputs,  Patricia *pat, doc_relevance *docs){
+    int ni[pat->nr_files];
     patricia_count(pat, ni);
-
-    int *counts;
-    for(int k = 0; k < n_docs; k++) { 
-        float w = 0;
+    for(int file_id = 0; file_id < pat->nr_files; file_id++) { 
+        double w = 0;
         for(int i =0; i < terms_inputs; i++){
-            counts = patricia_get(pat, m[i]);
+            int *counts = patricia_get(pat, words[i]);
             if(counts != NULL) {
-                for(int file_id = 0; file_id < n_docs; file_id++) {
-                    if(file_id == k){
-                        int temp = olpat_pair(counts, n_docs);
-                        w += calc_weight(counts[file_id], temp, n_docs);
-
-                    }
-                }
+                int n = 0;
+                // Conta a quantidade de arquivos em que i-ésima palavra aparece
+                for(int f = 0; f < pat->nr_files; ++f)
+                    if(counts[f] > 0) ++n;
+                // Cálculo do peso do documento
+                w += calc_weight(counts[file_id], n, pat->nr_files);
             }
         }
 
-        float ri = (1/(float)ni[k]) * w;
-        docs[k].relevance = ri;
+        double ri = (1 / (double) ni[file_id]) * w;
+        docs[file_id].relevance = ri;
     }
 }
 
 // Função para ordenar os documentos por ordem de relevância
-static void docs_sort(doc_relevance *docs, int doc_number) {
+static void docs_sort(doc_relevance *docs, int nr_files) {
     int i, j, max;
     doc_relevance aux;
-    for(i = 0; i < doc_number - 1; i++){
+    for(i = 0; i < nr_files - 1; i++){
         max = i;
-        for(j = i+ 1; j < doc_number ; j++){
+        for(j = i+ 1; j < nr_files ; j++){
             if(docs[j].relevance > docs[max].relevance){
                 max = j;
             }
@@ -221,31 +239,19 @@ static void docs_sort(doc_relevance *docs, int doc_number) {
         aux = docs[max];
         docs[max] = docs[i];
         docs[i] = aux;
-        
-        
     }
 }
-// função que inicializa um array que é usado para armazer os valores de relevância
+
+// Função que inicializa um array que é usado para armazer os valores de relevância
 static void array_init(doc_relevance *docs, int doc_number){
     for(int i =0; i < doc_number; i++){
         docs[i].file_id = i;
     }
 }
-// Função principal para o calculo e impressão baseado na relevância do documento
-void user_relevance(const wchar_t **m, int terms_inputs,  Patricia *pat, int doc_number,  doc_relevance *docs) {
-    array_init(docs, doc_number);
-    TF_IDF(m, terms_inputs, pat, doc_number, docs);
-    docs_sort(docs, doc_number);
-}
 
-// função que retorna a quantidade de documentos que possue o termo em seus pares
-int olpat_pair(int *array, int n_docs){
-    int count = 0;
-    for(int i =0; i < n_docs; i++){
-        if(array[i] != 0){
-            count++;
-        }
-    }
-    return count;
+// Função principal para o cálculo e impressão baseado na relevância do documento
+void user_relevance(wchar_t *words[], int terms_inputs,  Patricia *pat,  doc_relevance *docs) {
+    array_init(docs, pat->nr_files);
+    tf_idf(words, terms_inputs, pat, docs);
+    docs_sort(docs, pat->nr_files);
 }
-

@@ -7,13 +7,12 @@ Pedro Augusto Martins Pereira - 4692
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "patricia.h"
 
 // Lê o arquivo de entrada principal a partir da segunda linha, processando
 // cada arquivo na lista nele contida individualmente. Esse processamento
 // insere todos os termos identificados na árvore patrícia
-void input_archive(FILE *input, int nr_files, Patricia* pat);
+void input_archive(FILE *input, char *filenames[], Patricia* pat);
 
 // Processa um único arquivo na lista, iterando sobre todas as suas palavras
 // e inserindo-as na árvore patrícia
