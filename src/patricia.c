@@ -203,7 +203,7 @@ static double calc_weight(int oc, int dj, int nr_files) {
 }
 
 // Função para o calculo do valor relevância baseado em termos para cada documento na coleção
-static void tf_idf(wchar_t *words[], int terms_inputs,  Patricia *pat, doc_relevance *docs){
+static void tf_idf(wchar_t **words, int terms_inputs,  Patricia *pat, doc_relevance *docs){
     int ni[pat->nr_files];
     patricia_count(pat, ni);
     for(int file_id = 0; file_id < pat->nr_files; file_id++) { 
@@ -219,7 +219,6 @@ static void tf_idf(wchar_t *words[], int terms_inputs,  Patricia *pat, doc_relev
                 w += calc_weight(counts[file_id], n, pat->nr_files);
             }
         }
-
         double ri = (1 / (double) ni[file_id]) * w;
         docs[file_id].relevance = ri;
     }
