@@ -6,7 +6,6 @@ Pedro Augusto Martins Pereira - 4692
 */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include "patricia.h"
 
 // Lê o arquivo de entrada principal a partir da segunda linha, processando

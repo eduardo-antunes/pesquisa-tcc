@@ -1,7 +1,7 @@
 Detecção Automática de Linhas de Plantio em Culturas Agrícolas
 A detecção automática de linhas de plantio em diferentes culturas
-não ́é um trabalho simples e exige um esforço para ser realizada manualmente 
-pelo agricultor. A automação deste processo  ́e um bom exemplo de aplicação 
+não ́é um trabalho simples e exige um esforço para ser realizada manualmente
+pelo agricultor. A automação deste processo  ́e um bom exemplo de aplicação
 que tem se tornado promissora com a inserção da tecnologia digital na
 agricultura para planejar rotas de colheita. Este artigo compara
 o desempenho de três algoritmos de identificação do trajeto de

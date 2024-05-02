@@ -114,7 +114,7 @@ void patricia_update(Patricia *pat, const wchar_t *word, int file_id) {
 // Obtém a lista de contagens para cada arquivo de uma palavra em particular
 int *patricia_get(const Patricia *pat, const wchar_t *word) {
     // Caso base: árvore vazia
-    if(pat->root == NULL) 
+    if(pat->root == NULL)
         return NULL;
     // Percurso iterativo pela árvore patrícia
     Patricia_node *node = pat->root;
@@ -206,7 +206,7 @@ static double calc_weight(int oc, int dj, int nr_files) {
 static void tf_idf(wchar_t **words, int terms_inputs,  Patricia *pat, doc_relevance *docs){
     int ni[pat->nr_files];
     patricia_count(pat, ni);
-    for(int file_id = 0; file_id < pat->nr_files; file_id++) { 
+    for(int file_id = 0; file_id < pat->nr_files; file_id++) {
         double w = 0;
         for(int i =0; i < terms_inputs; i++){
             int *counts = patricia_get(pat, words[i]);
@@ -242,14 +242,15 @@ static void docs_sort(doc_relevance *docs, int nr_files) {
 }
 
 // Função que inicializa um array que é usado para armazer os valores de relevância
-static void array_init(doc_relevance *docs, int doc_number){
+static void array_init(doc_relevance *docs, int doc_number) {
     for(int i =0; i < doc_number; i++){
         docs[i].file_id = i;
     }
 }
 
 // Função principal para o cálculo e impressão baseado na relevância do documento
-void user_relevance(wchar_t *words[], int terms_inputs,  Patricia *pat,  doc_relevance *docs) {
+void user_relevance(wchar_t *words[], int terms_inputs,  Patricia *pat,
+        doc_relevance *docs) {
     array_init(docs, pat->nr_files);
     tf_idf(words, terms_inputs, pat, docs);
     docs_sort(docs, pat->nr_files);

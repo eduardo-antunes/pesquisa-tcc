@@ -11,7 +11,6 @@ Pedro Augusto Martins Pereira - 4692
 #define WORD_SIZE 64
 
 #include <wchar.h>
-#include <math.h>
 
 // Tipo de nó na árvore patrícia: interno ou folha
 typedef enum { NODE_INT, NODE_LEAF } Patricia_t;
@@ -62,7 +61,8 @@ void patricia_print(const Patricia *pat, FILE *fp);
 // Desaloca a árvore patrícia
 void patricia_free(Patricia *pat);
 
-// Calcula a relevância e ordena os documentos 
-void user_relevance(wchar_t *words[], int terms_inputs,  Patricia *pat, doc_relevance *docs);
+// Calcula a relevância e ordena os documentos
+void user_relevance(wchar_t *words[], int terms_inputs,  Patricia *pat,
+        doc_relevance *docs);
 
 #endif // PESQUISA_TCC_PATRICIA_H

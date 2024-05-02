@@ -84,7 +84,7 @@ int main(void) {
                 int count = 1, n = 0;
                 for(int i = 0; line[i] != 0; ++i) {
                     // Contagem de palavras
-                    if(iswspace(line[i])) 
+                    if(iswspace(line[i]))
                         ++count;
                     // Remoção de sinais de pontuação e conversão para minúsculas
                     line[i] = iswpunct(line[i]) ? ' ' : towlower(line[i]);
@@ -103,12 +103,12 @@ int main(void) {
                 int t = 0;
                 printf("\n== Top 5 arquivos mais relevantes ==\n");
                 for(int i = 0; i < nr_files && t < 5; ++i, ++t) {
-                    printf("%d. Arquivo #%d: %s (%g)\n", t + 1, docs[i].file_id, 
+                    printf("%d. Arquivo #%d: %s (%g)\n", t + 1, docs[i].file_id,
                         filenames[docs[i].file_id], docs[i].relevance);
                 }
                 printf("\n");
                 // Desalocação do vetor de palavras-chave
-                for(int i = 0; i < count; ++i) 
+                for(int i = 0; i < count; ++i)
                     free(words[i]);
                 free(words);
                 break;
